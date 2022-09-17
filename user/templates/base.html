@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}{% endblock %}</title>
+  <link href="{% static 'css/base.css' %}" rel="stylesheet">
+</head>
+
+<body>
+  <div id="header">
+    <span class="logo">みんなの予言</span>
+    {% if request.user.is_authenticated %}
+      <ul class="menu">
+        <li {% if section == "dashboard" %}class="selected"{% endif %}>
+          <a href="{% url 'dashboard' %}">ダッシュボード</a>
+        </li>
+      </ul>
+    {% endif %}
+    
+    <span class="user">
+      {% if request.user.is_authenticated %}
+        ようこそ、{{ request.user.username }}、ログアウトは<a href="{% url 'logout' %}">こちら</a>
+      {% else %}
+        <a href="{% url 'login' %}">ログイン</a>
+      {% endif %}
+    </span>
+  </div>
+
+  <div id="content">
+    {% block content %}
+    {% endblock %}
+  </div>
+</body>
+</html>
