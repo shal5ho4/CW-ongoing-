@@ -16,4 +16,12 @@
     <p><b>OAuthToken</b>:{{ user.access_token.oauth_token }}</p>
     <p><b>AuthTime</b>:{{ user.extra_data.auth_time }}</p>
   </div>
+
+  <div>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="ツイートを送信する">
+    </form>
+  </div>
 {% endblock %}

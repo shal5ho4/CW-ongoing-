@@ -12,7 +12,7 @@ class Tweets(models.Model):
   slug = models.SlugField(max_length=200, blank=True, unique=True)
   created_at = models.DateField(auto_now_add=True)
   will_post = models.DateField(blank=True)
-  is_active = models.BooleanField(default=False)
+  is_active = models.BooleanField(default=True)
 
   def __str__(self):
     return self.created_at
