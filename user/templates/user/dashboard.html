@@ -3,25 +3,29 @@
 {% block title %}みんなの予言{% endblock %}
 
 {% block content %}
-  <h1>みんなの予言</h1>
-  <p>
-    「この曲は売れると思っていた」
-    「こんな事件が起きると思っていた」
-    ......という予言をTwitter上で気軽に実現できるWebサービスです。
-  </p>
-  <div>
-    <p><b>ScreenName</b>:{{ user.access_token.screen_name }}</p>
-    <p><b>UserId</b>:{{ user.access_token.user_id }}</p>
-    <p><b>OAuthTokenSecret</b>:{{ user.access_token.oauth_token_secret }}</p>
-    <p><b>OAuthToken</b>:{{ user.access_token.oauth_token }}</p>
-    <p><b>AuthTime</b>:{{ user.extra_data.auth_time }}</p>
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card shadow-custom border-0 mb-4">
+      <div class="card-body text-center">
+        <h2 class="font-weight-bold text-grey">みんなの予言</h2>
+        <div class="bottom_line"></div>
+      </div>
+    </div>
   </div>
-
-  <div>
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <input type="submit" value="ツイートを送信する">
-    </form>
+  <div class="card shadow-custom border-0 col-lg-8 mx-auto mb-3">
+    <h3 class="py-2 text-grey">投稿したツイート</h3>
+    {% for tweet in tweets %}
+      <span class="font-weight-bold py-2 text-grey">
+        作成日：{{ tweet.created_at|date }}
+        <br>投稿予定日：{{ tweet.will_post|date }}
+      </span>
+      <span class="text-justify pb-2">
+        {{ tweet.tweet }}
+      </span>
+      <hr>
+    {% empty %}
+      <span class="pb-2">投稿したツイートはありません。</span>
+    {% endfor %}
   </div>
+</div>
 {% endblock %}

@@ -3,9 +3,10 @@
 {% block title %}Logged out{% endblock %}
 
 {% block content %}
-  <h1>ログアウト</h1>
+  <h2>ログアウト</h2>
   <p>
     ログアウトしました。
-    再ログインするには<a href="{% url 'login' %}">こちら</a>。
+    再ログインするには<a href="{% url 'social:begin' 'twitter' %}">こちら</a>。
+    <br>(Twitter認証ページに移動します。)
   </p>
 {% endblock %}

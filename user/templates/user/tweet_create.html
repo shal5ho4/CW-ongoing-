@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}みんなの予言{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+    <div class="shadow-custom messages alert alert-danger text-center
+      col-lg-7 mx-auto">
+    {% else %}
+    <div class="shadow-custom messages alert alert-success text-center
+      col-lg-7 mx-auto">
+    {% endif %}
+      {{ message }}
+      <a href="" class="close">x</a>
+    </div>
+  {% endfor %}
+{% endif %}
+
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    
+    <div class="card shadow-custom border-0 mb-4">
+      <div class="card-body text-center">
+        <h2 class="font-weight-bold text-grey">みんなの予言</h2>
+        <div class="bottom_line"></div>
+      </div>
+    </div>
+
+    <p>
+      「この曲は売れると思っていた」
+      「こんな事件が起きると思っていた」
+      ......という予言をTwitter上で気軽に実現できるWebサービスです。
+      投稿したい日付を選んで、ツイートを入力してください。
+    </p>
+    <hr>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="modal-body">
+        <!-- <div class="bg-grey"> -->
+          <div class="text-center pt-2">
+            投稿予定日：
+            {{ form.will_post }}
+            <br>{{ form.will_post_time }}時
+          </div>
+          <hr class="m-0">
+          <div class="input-field text-center p-2">
+            {{ form.tweet }}
+          </div>
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-info" type="submit">送信する</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

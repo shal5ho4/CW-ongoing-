@@ -80,9 +80,9 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_REDIRECT_URL = 'create'
 
-LOGIN_URL = 'login'
+LOGIN_URL = 'top'
 
 LOGOUT_URL = 'logout'
 

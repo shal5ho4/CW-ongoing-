@@ -3,5 +3,5 @@ from .models import Tweets
 
 @admin.register(Tweets)
 class TweetsAdmin(admin.ModelAdmin):
-  list_display = ['user', 'created_at', 'will_post', 'is_active']
+  list_display = ['user', 'created_at', 'will_post', 'is_posted']
   list_filter = ['created_at']
