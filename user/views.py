@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib import messages
 from social_django.models import UserSocialAuth
 from .forms import TweetCreateForm
 from .models import Tweets
-import tweepy
+from .tasks import schedule
+import datetime
 
 
 def top_page(request):
@@ -28,7 +28,7 @@ def dashboard(request):
 
 
 @login_required
-def tweet_create(request):
+def tweet_create_form(request):
   user1 = User.objects.get(id=request.user.id)
   user2 = UserSocialAuth.objects.get(user_id=user1.id)
   
@@ -39,19 +39,9 @@ def tweet_create(request):
       cd = form.cleaned_data
       new_tweet = form.save(commit=False)
       new_tweet.user = user1
-      text = new_tweet.tweet
       new_tweet.save()
 
-      tokens = user2.access_token
-      ck = settings.SOCIAL_AUTH_TWITTER_KEY
-      cs = settings.SOCIAL_AUTH_TWITTER_SECRET
-
-      auth = tweepy.OAuthHandler(ck, cs)
-      auth.set_access_token(tokens['oauth_token'], tokens['oauth_token_secret'])
-
-      api = tweepy.API(auth)
-      api.update_status(status=text)
-
+      schedule.delay(new_tweet.id)
       messages.success(request, 'ツイートを登録しました。')
 
       return redirect('dashboard')

@@ -7,6 +7,6 @@ urlpatterns = [
   path('login/', auth_views.LoginView.as_view(), name='login'),
   path('logout/', auth_views.LogoutView.as_view(), name='logout'),
   path('dashboard/', views.dashboard, name='dashboard'),
-  path('tweet_create/', views.tweet_create, name='create'),
+  path('tweet_create/', views.tweet_create_form, name='create'),
   path('', views.top_page, name='top'),
 ]

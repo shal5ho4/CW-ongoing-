@@ -1,9 +1,11 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.utils.text import slugify
 from django.core.validators import MinValueValidator
 from social_django.models import UserSocialAuth
 import datetime
+
 
 class Tweets(models.Model):
   user = models.ForeignKey(
@@ -23,15 +25,13 @@ class Tweets(models.Model):
     verbose_name_plural = 'Tweets'
   
 
-  def save(self, *args, **kwargs):
-    if not self.slug:
-      id = str(self.user.id)
-      usr = UserSocialAuth.objects.get(user_id=self.user.id)
-      data = usr.access_token
-      screen_name = data['screen_name']
-      slug = f'{screen_name}_{id}'
-      self.slug = slug
-    super().save(*args, **kwargs)
+  def get_seconds(self):
+    dt1 = self.created_at
+    dt2 = self.will_post + datetime.timedelta(hours=self.will_post_time)
+    td = dt2 - dt1
+    td_sec = int(td.total_seconds())
+    
+    return td_sec
 
   def __str__(self):
     return self.slug

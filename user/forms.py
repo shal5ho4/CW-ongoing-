@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.text import slugify
 from .models import Tweets
 
 HOURS = [
@@ -15,6 +16,15 @@ class LoginForm(forms.Form):
 
 
 class TweetCreateForm(forms.ModelForm):
+
+  def save(self, force_insert=False, force_update=False, commit=True):
+    tweet = super().save(commit=False)
+    slug = slugify(tweet.will_post) # ここかえる
+    tweet.slug = slug
+
+    if commit:
+      tweet.save()
+    return tweet
   
   class Meta:
     model = Tweets
