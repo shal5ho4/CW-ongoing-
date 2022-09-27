@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}みんなの予言{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card shadow-custom border-0 mb-4">
+      <div class="card-body text-center">
+        <h2 class="font-weight-bold text-grey">みんなの予言</h2>
+        <div class="bottom_line"></div>
+      </div>
+    </div>
+
+    <div class="top">
+      <h2 class="mt-4 font-weight-bold text-grey">
+        {{ tweet.will_post|date }} - {{ tweet.will_post_time }}時
+      </h2>
+      <div class="mt-3">
+        {{ tweet.tweet }}
+      </div>
+      <hr>
+      <div>
+        <span class="font-weight-bold text-grey">
+          Created at:
+        </span> {{ tweet.created_at|date }} - {{ tweet.created_at|time }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

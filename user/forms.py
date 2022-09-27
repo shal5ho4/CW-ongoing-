@@ -1,6 +1,8 @@
 from django import forms
+from django.utils import timezone
 from django.utils.text import slugify
 from .models import Tweets
+from datetime import timedelta
 
 HOURS = [
   (0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
@@ -16,14 +18,33 @@ class LoginForm(forms.Form):
 
 
 class TweetCreateForm(forms.ModelForm):
+  
+  def clean(self):
+    cd = super().clean()
+    will_post = cd.get('will_post')
+    will_post_time = cd.get('will_post_time')
+
+    will_post_after = will_post + timedelta(hours=will_post_time)
+    today = timezone.now()
+
+    if will_post_after < today:
+      raise forms.ValidationError('')
+    
+    return cd
 
   def save(self, force_insert=False, force_update=False, commit=True):
     tweet = super().save(commit=False)
-    slug = slugify(tweet.will_post) # ここかえる
+    slug = slugify(tweet.publish)
     tweet.slug = slug
+    
+    will_post = tweet.will_post
+    will_post_time = tweet.will_post_time
+    new_will_post = will_post + timedelta(hours=will_post_time)
+    tweet.will_post = new_will_post
 
     if commit:
       tweet.save()
+      
     return tweet
   
   class Meta:

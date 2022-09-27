@@ -1,12 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib import messages
 from social_django.models import UserSocialAuth
 from .forms import TweetCreateForm
 from .models import Tweets
 from .tasks import schedule
-import datetime
 
 
 def top_page(request):
@@ -28,17 +26,21 @@ def dashboard(request):
 
 
 @login_required
-def tweet_create_form(request):
-  user1 = User.objects.get(id=request.user.id)
-  user2 = UserSocialAuth.objects.get(user_id=user1.id)
+def tweet_detail(request, slug):
+  tweet = get_object_or_404(Tweets, slug=slug)
   
+  return render(request, 'user/tweet_detail.html', {'tweet': tweet})
+
+
+@login_required
+def tweet_create_form(request):
   if request.method == 'POST':
     form = TweetCreateForm(request.POST)
     
     if form.is_valid():
       cd = form.cleaned_data
       new_tweet = form.save(commit=False)
-      new_tweet.user = user1
+      new_tweet.user = request.user
       new_tweet.save()
 
       schedule.delay(new_tweet.id)

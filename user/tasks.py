@@ -45,7 +45,7 @@ def schedule(tweet_id):
     api = tweepy.API(auth)
     api.update_status(status=text)
 
-  td_sec = 10 # ここかえる
+  td_sec = tweet.get_seconds()
 
   s = sched.scheduler(time.time, time.sleep)
   s.enter(td_sec, 1, tweet_create)

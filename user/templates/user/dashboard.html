@@ -19,9 +19,11 @@
         作成日：{{ tweet.created_at|date }}
         <br>投稿予定日：{{ tweet.will_post|date }}
       </span>
-      <span class="text-justify pb-2">
-        {{ tweet.tweet }}
-      </span>
+      <a href="{{ tweet.get_absolute_url }}">
+        <span class="text-justify pb-2">
+          {{ tweet.tweet }}
+        </span>
+      </a>
       <hr>
     {% empty %}
       <span class="pb-2">投稿したツイートはありません。</span>
