@@ -23,6 +23,9 @@ class Tweets(models.Model):
     ordering = ('-created_at',)
     verbose_name_plural = 'Tweets'
 
+  def __str__(self):
+    return self.slug
+
   def get_absolute_url(self):
     return reverse('detail', args=[self.slug])
 
@@ -35,6 +38,4 @@ class Tweets(models.Model):
 
     return td_sec
 
-  def __str__(self):
-    return self.slug
   

@@ -3,23 +3,27 @@
 {% block title %}みんなの予言{% endblock %}
 
 {% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card shadow-custom border-0 mb-4">
+      <div class="card-body text-center">
+        <h2 class="font-weight-bold text-grey">みんなの予言</h2>
+        <div class="bottom_line"></div>
+      </div>
+    </div>
 
-<div>
-  <h1>みんなの予言</h1>
-  <p>
-    「この曲は売れると思っていた」
-    「こんな事件が起きると思っていた」
-    ......という予言をTwitter上で気軽に実現できるWebサービスです。
-  </p>
-</div>
-
-<div class="login-form">
-  <div class="social">
-    <ul>
-      <li class="twitter">
-        <a href="{% url 'social:begin' 'twitter' %}">ツイッターでログインする</a>
-      </li>
-    </ul>
+    <p class="text-center">
+      「この曲は売れると思っていた」
+      「こんな事件が起きると思っていた」
+      ......という予言をTwitter上で気軽に実現できるWebサービスです。
+      <br>ご利用にはツイッター認証が必要です。
+      下のボタンよりログインしてください。
+    </p>
+    <hr>
+    <a href="{% url 'social:begin' 'twitter' %}"
+      class="btn btn-outline-info shadow-custom col">
+      twitterでログイン
+    </a>
   </div>
 </div>
 {% endblock %}

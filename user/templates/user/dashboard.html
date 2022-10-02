@@ -3,6 +3,21 @@
 {% block title %}みんなの予言{% endblock %}
 
 {% block content %}
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+    <div class="shadow-custom messages alert alert-danger text-center
+      col-lg-7 mx-auto">
+    {% else %}
+    <div class="shadow-custom messages alert alert-success text-center
+      col-lg-7 mx-auto">
+    {% endif %}
+      {{ message }}
+      <a href="" class="close">x</a>
+    </div>
+  {% endfor %}
+{% endif %}
+
 <div class="row justify-content-center">
   <div class="col-lg-6">
     <div class="card shadow-custom border-0 mb-4">
@@ -12,12 +27,33 @@
       </div>
     </div>
   </div>
-  <div class="card shadow-custom border-0 col-lg-8 mx-auto mb-3">
-    <h3 class="py-2 text-grey">投稿したツイート</h3>
-    {% for tweet in tweets %}
+</div>
+<div class="row justify-content-center">
+  <div class="card shadow-custom border-0 col-lg-5 mx-auto mb-3">
+    <h3 class="py-2 text-grey text-center">投稿したツイート</h3>
+    <hr>
+    {% for tweet in posted %}
       <span class="font-weight-bold py-2 text-grey">
-        作成日：{{ tweet.created_at|date }}
-        <br>投稿予定日：{{ tweet.will_post|date }}
+        作成した日：{{ tweet.created_at|date }} {{ tweet.created_at|time }}
+        <br>投稿予定日：{{ tweet.will_post|date }} {{ tweet.will_post|time }}
+      </span>
+      <a href="{{ tweet.get_absolute_url }}">
+        <span class="text-justify pb-2">
+          {{ tweet.tweet }}
+        </span>
+      </a>
+      <hr>
+    {% empty %}
+      <span class="pb-2">投稿したツイートはありません。</span>
+    {% endfor %}
+  </div>
+  <div class="card shadow-custom border-0 col-lg-5 mx-auto mb-3">
+    <h3 class="py-2 text-grey text-center">予約中のツイート</h3>
+    <hr>
+    {% for tweet in scheduled %}
+      <span class="font-weight-bold py-2 text-grey">
+        作成した日：{{ tweet.created_at|date }} {{ tweet.created_at|time }}
+        <br>投稿予定日：{{ tweet.will_post|date }} {{ tweet.will_post|time }}
       </span>
       <a href="{{ tweet.get_absolute_url }}">
         <span class="text-justify pb-2">

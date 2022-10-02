@@ -16,13 +16,12 @@ def top_page(request):
 
 @login_required
 def dashboard(request):
-  if request.user.is_superuser:
-    return redirect('admin/login/')
-  
-  tweets = Tweets.objects.filter(user=request.user)
+  posted = Tweets.objects.filter(user=request.user, is_posted=True)
+  scheduled = Tweets.objects.filter(user=request.user, is_posted=False)
   user = UserSocialAuth.objects.get(user_id=request.user.id)
 
-  return render(request, 'user/dashboard.html', {'tweets': tweets, 'user': user})
+  return render(request, 'user/dashboard.html', 
+    {'posted': posted, 'scheduled': scheduled, 'user': user})
 
 
 @login_required
@@ -34,6 +33,9 @@ def tweet_detail(request, slug):
 
 @login_required
 def tweet_create_form(request):
+  if request.user.is_superuser:
+    return redirect('admin/login/')
+
   if request.method == 'POST':
     form = TweetCreateForm(request.POST)
     
