@@ -35,7 +35,7 @@
     {% for tweet in posted %}
       <span class="font-weight-bold py-2 text-grey">
         作成した日：{{ tweet.created_at|date }} {{ tweet.created_at|time }}
-        <br>投稿予定日：{{ tweet.will_post|date }} {{ tweet.will_post|time }}
+        <br>投稿した日：{{ tweet.will_post|date }} {{ tweet.will_post|time }}
       </span>
       <a href="{{ tweet.get_absolute_url }}">
         <span class="text-justify pb-2">

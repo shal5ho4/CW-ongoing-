@@ -28,7 +28,30 @@ def dashboard(request):
 def tweet_detail(request, slug):
   tweet = get_object_or_404(Tweets, slug=slug)
   
-  return render(request, 'user/tweet_detail.html', {'tweet': tweet})
+  if request.method == 'POST':
+    edit_form = TweetCreateForm(request.POST, instance=tweet)
+
+    if request.POST.get('next', '') == 'delete':
+      tweet.delete()
+      messages.warning(request, 'ツイートを削除しました。')
+
+      return redirect('dashboard')
+    
+    elif edit_form.is_valid():
+      edit_form.save()
+      messages.success(request, 'ツイート内容を更新しました。')
+
+      return redirect('dashboard')
+    
+    else:
+      messages.error(request, 'ツイートは50文字以内で入力してください。')
+  
+  else:
+    edit_form = TweetCreateForm(instance=tweet)
+
+  return render(request, 'user/tweet_detail.html', 
+    {'tweet': tweet, 'edit_form': edit_form}
+  )
 
 
 @login_required
@@ -40,7 +63,6 @@ def tweet_create_form(request):
     form = TweetCreateForm(request.POST)
     
     if form.is_valid():
-      cd = form.cleaned_data
       new_tweet = form.save(commit=False)
       new_tweet.user = request.user
       new_tweet.save()

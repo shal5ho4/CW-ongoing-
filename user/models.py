@@ -34,7 +34,7 @@ class Tweets(models.Model):
     dt2 = self.will_post
     
     td = dt2 - dt1
-    td_sec = int(td.total_seconds()) 
+    td_sec = int(td.total_seconds())
 
     return td_sec
 

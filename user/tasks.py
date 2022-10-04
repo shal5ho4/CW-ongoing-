@@ -23,7 +23,7 @@ def schedule(tweet_id):
     days = timedelta(seconds=seconds).days
     
     if days == 0:
-      hour = tweet.will_post_time
+      hour = int(seconds / 3600)
       status = f'私は昨日{hour}時に「{text}」と予言しました。 \n' \
                f'https://mysite.com:8000{url}'
     else:

@@ -11,21 +11,50 @@
         <div class="bottom_line"></div>
       </div>
     </div>
+    {% if tweet.is_posted %}
 
-    <div class="top">
-      <h2 class="mt-4 font-weight-bold text-grey">
-        {{ tweet.will_post|date }} - {{ tweet.will_post_time }}時
-      </h2>
-      <div class="mt-3">
-        {{ tweet.tweet }}
+      <div class="top">
+        <h4 class="mt-4 font-weight-bold text-grey">
+          {{ tweet.will_post|date }} - {{ tweet.will_post_time }}時
+        </h4>
+        このツイートは投稿済みです。
+        <hr>
+        <div class="mt-3">
+          {{ tweet.tweet }}
+        </div>
+        <hr>
+        <div>
+          <span class="font-weight-bold text-grey">
+            作成した日:
+          </span> {{ tweet.created_at|date }} - {{ tweet.created_at|time }}
+        </div>
       </div>
-      <hr>
-      <div>
-        <span class="font-weight-bold text-grey">
-          作成した日:
-        </span> {{ tweet.created_at|date }} - {{ tweet.created_at|time }}
-      </div>
-    </div>
+    {% else %}
+      <p class="text-center">
+        投稿予定のツイートを表示しています。
+        <br>内容を編集、または削除することができます。
+      </p>
+      <form method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+          <!-- <div class="bg-grey"> -->
+            <div class="text-center pt-2">
+              投稿予定日：
+              {{ edit_form.will_post }}
+              {{ edit_form.will_post_time }}時
+            </div>
+            <hr class="m-0">
+            <div class="input-field text-center p-2">
+              {{ edit_form.tweet }}
+            </div>
+          <!-- </div> -->
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-info" type="submit" name="next" value="update">更新する</button>
+          <button class="btn btn-danger" type="submit" name="next" value="delete">削除する</button>
+        </div>
+      </form>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
