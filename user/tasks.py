@@ -10,10 +10,9 @@ import time
 
 @task
 def schedule(tweet_id):
-  global tweet
-  tweet = Tweets.objects.get(id=tweet_id)
 
   def tweet_create():
+    tweet = Tweets.objects.get(id=tweet_id)
     user1 = tweet.user
     user2 = UserSocialAuth.objects.get(user_id=user1.id)
     
@@ -23,9 +22,15 @@ def schedule(tweet_id):
     days = timedelta(seconds=seconds).days
     
     if days == 0:
-      hour = int(seconds / 3600)
-      status = f'私は昨日{hour}時に「{text}」と予言しました。 \n' \
-               f'https://mysite.com:8000{url}'
+      hr = int(seconds / 3600)
+
+      if hr == 0:
+        min = int(seconds / 60)
+        status = f'私は{min}分前に「{text}」と予言しました。 \n' \
+                 f'https://mysite.com:8000{url}'
+      else:
+        status = f'私は{hr}時間前に「{text}」と予言しました。 \n' \
+                 f'https://mysite.com:8000{url}'
     else:
       status = f'私は{days}日前に「{text}」と予言しました。 \n' \
                f'https://mysite.com:8000{url}'
@@ -41,9 +46,12 @@ def schedule(tweet_id):
 
     tweet.is_posted = True
     tweet.save()
+  
+  def getseconds(tweet_id):
+    tweet = Tweets.objects.get(id=tweet_id)
+    return tweet.get_seconds()
 
-  td_sec = tweet.get_seconds()
-
+  td_sec = getseconds(tweet_id)
   s = sched.scheduler(time.time, time.sleep)
   s.enter(td_sec, 1, tweet_create)
   s.run()

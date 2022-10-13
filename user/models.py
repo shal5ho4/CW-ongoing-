@@ -17,6 +17,7 @@ class Tweets(models.Model):
   will_post = models.DateTimeField()
   will_post_time = models.IntegerField(default=0)
   is_posted = models.BooleanField(default=False)
+  task_id = models.CharField(max_length=255, blank=True)
   
   
   class Meta:

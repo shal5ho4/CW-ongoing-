@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from social_django.models import UserSocialAuth
+from PJ.celery import app as celery_app
 from .forms import TweetCreateForm
 from .models import Tweets
 from .tasks import schedule
@@ -20,8 +22,18 @@ def dashboard(request):
   scheduled = Tweets.objects.filter(user=request.user, is_posted=False)
   user = UserSocialAuth.objects.get(user_id=request.user.id)
 
+  paginator = Paginator(posted, 10)
+  page = request.GET.get('page')
+
+  try:
+    posted = paginator.page(page)
+  except PageNotAnInteger:
+    posted = paginator.page(1)
+  except EmptyPage:
+    posted = paginator.page(paginator.num_pages)
+
   return render(request, 'user/dashboard.html', 
-    {'posted': posted, 'scheduled': scheduled, 'user': user})
+    {'posted': posted, 'scheduled': scheduled, 'user': user, 'page': page})
 
 
 @login_required
@@ -32,13 +44,18 @@ def tweet_detail(request, slug):
     edit_form = TweetCreateForm(request.POST, instance=tweet)
 
     if request.POST.get('next', '') == 'delete':
+      celery_app.control.revoke(tweet.task_id, terminate=True, signal='SIGKILL')
       tweet.delete()
-      messages.warning(request, 'ツイートを削除しました。')
+      messages.success(request, 'ツイートを削除しました。')
 
       return redirect('dashboard')
     
-    elif edit_form.is_valid():
+    elif request.POST.get('next', '') == 'update' \
+         and edit_form.is_valid():
+      
       edit_form.save()
+      celery_app.control.revoke(tweet.task_id, terminate=True, signal='SIGKILL')
+      schedule.delay(tweet.id)
       messages.success(request, 'ツイート内容を更新しました。')
 
       return redirect('dashboard')
@@ -67,15 +84,20 @@ def tweet_create_form(request):
       new_tweet.user = request.user
       new_tweet.save()
 
-      schedule.delay(new_tweet.id)
+      task = schedule.delay(new_tweet.id)
+      new_tweet.task_id = task.id
+      new_tweet.save()
+      
       messages.success(request, 'ツイートを登録しました。')
-
+      
       return redirect('dashboard')
     
     else:
-      messages.error(request, '日付は本日以降で、ツイートは50文字以内で入力してください。')
-  
+      messages.error(
+        request, '日付は本日以降で、ツイートは50文字以内で入力してください。'
+      )
+
   else:
     form = TweetCreateForm()
-  
+
   return render(request, 'user/tweet_create.html', {'form': form})
